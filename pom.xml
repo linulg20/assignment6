@@ -62,16 +62,21 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.10</version>
                 <executions>
+                    <!-- Attach the Jacoco agent before tests run -->
                     <execution>
                         <id>prepare-agent</id>
-                        <phase>pre-integration-test</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/jacoco.exec</destFile>
+                        </configuration>
                     </execution>
+
                     <execution>
                         <id>report</id>
-                        <phase>post-integration-test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
@@ -79,7 +84,8 @@
                 </executions>
             </plugin>
 
-            <!-- Fix Checkstyle so it does not fail the build -->
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
