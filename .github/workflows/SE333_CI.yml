@@ -22,9 +22,6 @@ jobs:
       - name: Install Checkstyle
         run: mvn checkstyle:check
 
-      - name: Run Checkstyle
-        run: mvn checkstyle:checkstyle
-
       - name: Upload Checkstyle Report
         uses: actions/upload-artifact@v4
         with:
@@ -41,4 +38,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco
+          path: target/site/jacoco/index.html
+
