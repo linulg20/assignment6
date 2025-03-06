@@ -1,14 +1,13 @@
 package org.example.Barnes;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BarnesAndNobleTest {
@@ -39,8 +38,8 @@ class BarnesAndNobleTest {
 
         PurchaseSummary summary = store.getPriceForCart(order);
 
-        assertNotNull(summary);
-        assertEquals(35, summary.getTotalPrice());
+        Assertions.assertNotNull(summary);
+        Assertions.assertEquals(35, summary.getTotalPrice());
         verify(mockProcess).buyBook(book1, 2);
         verify(mockProcess).buyBook(book2, 1);
     }
@@ -57,9 +56,9 @@ class BarnesAndNobleTest {
 
         PurchaseSummary summary = store.getPriceForCart(order);
 
-        assertNotNull(summary);
-        assertEquals(10, summary.getTotalPrice()); // Only 1 book available
-        assertTrue(summary.getUnavailable().containsKey(book));
-        assertEquals(4, summary.getUnavailable().get(book)); // 4 unavailable
+        Assertions.assertNotNull(summary);
+        Assertions.assertEquals(10, summary.getTotalPrice());
+        Assertions.assertTrue(summary.getUnavailable().containsKey(book));
+        Assertions.assertEquals(4, summary.getUnavailable().get(book));
     }
 }
