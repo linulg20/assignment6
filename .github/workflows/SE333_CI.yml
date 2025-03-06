@@ -19,16 +19,16 @@ jobs:
           distribution: 'temurin'
           architecture: x64
 
-      - name: Install Checkstyle
+      - name: Run Static Analysis (Checkstyle)
         run: mvn checkstyle:check
 
       - name: Upload Checkstyle Report
         uses: actions/upload-artifact@v4
         with:
-          name: checkstyle-report
+          name: checkstyle-result
           path: target/checkstyle-result.xml
 
-      - name: Run Maven Tests
+      - name: Run Tests
         run: mvn clean test
 
       - name: Generate JaCoCo Report
@@ -39,4 +39,3 @@ jobs:
         with:
           name: jacoco-report
           path: target/site/jacoco/index.html
-
