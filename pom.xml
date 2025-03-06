@@ -44,6 +44,7 @@
     <build>
         <plugins>
 
+            <!-- Ensure tests run correctly -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -55,7 +56,7 @@
                 </configuration>
             </plugin>
 
-
+            <!-- Ensure JaCoCo collects execution data correctly -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -63,14 +64,14 @@
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
-                        <phase>test</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
                         <id>report</id>
-                        <phase>verify</phase>
+                        <phase>post-integration-test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
@@ -78,7 +79,7 @@
                 </executions>
             </plugin>
 
-
+            <!-- Fix Checkstyle so it does not fail the build -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -93,10 +94,12 @@
                     </execution>
                 </executions>
                 <configuration>
-
+                    <!-- Prevent Checkstyle errors from failing the build -->
                     <failOnViolation>false</failOnViolation>
+                    <outputFile>${project.build.directory}/checkstyle-result.xml</outputFile>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>

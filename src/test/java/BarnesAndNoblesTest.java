@@ -1,23 +1,65 @@
-package org.example.Barnes; // ✅ Match the correct package of the main classes
+package org.example.Barnes;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class BarnesAndNobleTest {
 
-    @Test
-    @DisplayName("specification-based - Should create a book successfully")
-    void testBookCreation() {
-        Book book = new Book("123456789", 39, 5); // ✅ Corrected constructor arguments
-        assertEquals(39, book.getPrice());
-        assertEquals(5, book.getQuantity());
+    private BookDatabase mockDatabase;
+    private BuyBookProcess mockProcess;
+    private BarnesAndNoble store;
+
+    @BeforeEach
+    void setUp() {
+        mockDatabase = mock(BookDatabase.class);
+        mockProcess = mock(BuyBookProcess.class);
+        store = new BarnesAndNoble(mockDatabase, mockProcess);
     }
 
     @Test
-    @DisplayName("structural-based - Should retrieve book price correctly")
-    void testRetrieveBookPrice() {
-        Book book = new Book("987654321", 50, 10);
-        assertEquals(50, book.getPrice()); // ✅ Ensures the price retrieval works
+    @DisplayName("specification-based - Get total price for cart")
+    void testGetPriceForCart() {
+        Book book1 = new Book("12345", 10, 5);
+        Book book2 = new Book("67890", 15, 2);
+
+        when(mockDatabase.findByISBN("12345")).thenReturn(book1);
+        when(mockDatabase.findByISBN("67890")).thenReturn(book2);
+
+        Map<String, Integer> order = new HashMap<>();
+        order.put("12345", 2);
+        order.put("67890", 1);
+
+        PurchaseSummary summary = store.getPriceForCart(order);
+
+        assertNotNull(summary);
+        assertEquals(35, summary.getTotalPrice());
+        verify(mockProcess).buyBook(book1, 2);
+        verify(mockProcess).buyBook(book2, 1);
+    }
+
+    @Test
+    @DisplayName("structural-based - Handle unavailable books")
+    void testUnavailableBooks() {
+        Book book = new Book("12345", 10, 1);
+
+        when(mockDatabase.findByISBN("12345")).thenReturn(book);
+
+        Map<String, Integer> order = new HashMap<>();
+        order.put("12345", 5);
+
+        PurchaseSummary summary = store.getPriceForCart(order);
+
+        assertNotNull(summary);
+        assertEquals(10, summary.getTotalPrice()); // Only 1 book available
+        assertTrue(summary.getUnavailable().containsKey(book));
+        assertEquals(4, summary.getUnavailable().get(book)); // 4 unavailable
     }
 }
